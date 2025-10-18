@@ -55,7 +55,18 @@ function isUserRegistered(userEmail) {
 // DBから全ユーザー情報を取得
 function getAllUsers() {
   // sheetから{email: '', name: '', attendance: '', presentation: '', number: ''}の配列を返す
-  return [{ email: 'e1q230000@example.com', name: '北海道 太郎', attendance: null, presentation: null, number: null }];
+  let data = sheet.getDataRange().getValues();
+  let users = [];
+  for (let i = 0; i < data.length; i++) {
+    users.push({
+      email: data[i][0],
+      name: data[i][1],
+      attendance: data[i][2],
+      presentation: data[i][3],
+      number: data[i][4]
+    });
+  }
+  return users;
 }
 
 // データを発表順に並び変えて取得
@@ -190,6 +201,5 @@ function doPost(e) {
 
 // テスト
 function test() {
-  console.log(isUserRegistered('e1q23000@example.com'));
-  console.log(isUserRegistered('e1q24000@example.com'));
+  console.log(getAllUsers());
 }
