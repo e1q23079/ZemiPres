@@ -124,6 +124,13 @@ function resetStatus() {
 // ステータスを更新する（出席）
 function updateAttendanceStatus(userEmail, status) {
   // sheetのuserEmailの出欠ステータスをstatusに更新する
+  let data = sheet.getDataRange().getValues();
+  for (let i = 0; i < data.length; i++) {
+    if (data[i][0] === userEmail) {
+      sheet.getRange(i + 1, 3).setValue(status);
+      break;
+    }
+  }
 }
 
 // // ステータスを更新する（発表済み）
@@ -237,5 +244,6 @@ function doPost(e) {
 
 // テスト
 function test() {
-  Logger.log(resetStatus());
+  Logger.log(updateAttendanceStatus("e1q23000@example.com", "出席"));
+  Logger.log(updateAttendanceStatus("e1q24000@example.com", "欠席"));
 }
