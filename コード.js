@@ -79,9 +79,35 @@ function getUsersByPresentationOrder() {
   return users;
 }
 
+// 発表順を更新する
+function updatePresentationOrder(userEmail, orderNumber) {
+  // sheetのuserEmailの発表順をorderNumberに更新する
+  let data = sheet.getDataRange().getValues();
+  for (let i = 0; i < data.length; i++) {
+    if (data[i][0] === userEmail) {
+      sheet.getRange(i + 1, 5).setValue(orderNumber);
+      break;
+    }
+  }
+}
+
 // 発表順をランダムに割り振る
 function assignPresentationOrder() {
   // sheetの全ユーザーの発表順をランダムに割り振る
+  let users = getAllUsers();
+  let numbers = [];
+  for (let i = 1; i <= users.length; i++) {
+    numbers.push(i);
+  }
+  // シャッフル
+  for (let i = numbers.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+  }
+  // 発表順を更新
+  for (let i = 0; i < users.length; i++) {
+    updatePresentationOrder(users[i].email, numbers[i]);
+  }
 }
 
 // ステータスをリセットする
@@ -205,5 +231,5 @@ function doPost(e) {
 
 // テスト
 function test() {
-  console.log(getUsersByPresentationOrder());
+  Logger.log(assignPresentationOrder());
 }
