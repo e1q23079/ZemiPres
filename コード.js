@@ -269,7 +269,12 @@ function doPost(e) {
 
 }
 
+//config読み込み
+function getConfig() {
+  return spred.getSheetByName('config').getRange('A1').getValue();
+}
+
 // テスト
 function test() {
-  recordLastUpdatedTime();
+  console.log(getConfig());
 }
