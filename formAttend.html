@@ -13,14 +13,6 @@
             background-color: rgb(246, 246, 246);
         }
 
-        table {
-            text-align: center;
-        }
-
-        .next-user {
-            text-align: center;
-        }
-
         .mes {
             text-align: center;
         }
@@ -36,13 +28,23 @@
             margin: 10px;
         }
 
-        .table-box {
-            padding: 20px;
-        }
-
         .user-name {
             color: white;
             padding-right: 10px;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        form {
+            width: 300px;
+            margin: auto;
+            padding-top: 5%;
+        }
+
+        button {
+            width: 110px;
         }
     </style>
 </head>
@@ -82,56 +84,39 @@
     </div>
     <? } ?>
 
-    <div class="title">
-        発表順番
-    </div>
+    <form method="post" action="<?= url ?>">
+        <div class="mb-3">
+            <strong><label for="exampleInputPassword1" class="form-label">ステータス</label></strong>
+            <select class="form-select center" aria-label="Default select example" name="attendance" required>
+                <option selected disabled value="">出欠を選択</option>
+                <option value="1">出席</option>
+                <option value="2">欠席</option>
+            </select>
+        </div>
 
-    <!-- <p class="mes">毎週水曜日17:00に更新を行います．</p> -->
+        <div class="center">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#exampleModal">登録</button>
+        </div>
 
-    <p class="mes">
-        更新時刻：
-        <?= lastUpdatedTime ?>
-    </p>
-
-    <!-- <p class="next-user">次の発表者は、「北海道 太郎」さんです。</p> -->
-
-    <div class="table-box">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">名前</th>
-                    <th scope="col">出欠</th>
-                    <!-- <th scope="col">発表状況</th>
-                    <th scope="col">操作</th> -->
-                </tr>
-            </thead>
-            <tbody>
-                <? for (var i = 0; i < usersByPresentationOrder.length; i++) { ?>
-                <? var user = usersByPresentationOrder[i]; ?>
-                <tr <? if(user.attendance=="欠席" ){ ?>class="table-secondary"
-                    <? } ?>>
-                    <th scope="row">
-                        <?= user.name ?>
-                    </th>
-                    <td>
-                        <?= user.attendance ?>
-                    </td>
-                    <!-- <td>
-                        <?= user.presentation ?>
-                    </td>
-                    <td>
-                        <? if (user.presentation == "true") { ?>
-                        <button type="button" class="btn btn-long" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">発表済みにする</button>
-                        <? } else { ?>
-                        <button type="button" class="btn btn-long" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">未発表にする</button>
-                        <? } ?>
-                    </td> -->
-                </tr>
-                <? } ?>
-            </tbody>
-        </table>
-    </div>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">確認</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        本当に申請しますか？
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">はい</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">いいえ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 
 </html>
