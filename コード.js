@@ -37,6 +37,7 @@ function sendEmailToAllUsers(subject, body) {
 // ユーザー登録
 function registerUser(userEmail, userName) {
   // sheetに[userEmail, userName, null, null, null]を追加
+  sheet.appendRow([userEmail, userName, null, null, null]);
 }
 
 // ユーザーが登録されているか確認
@@ -183,5 +184,6 @@ function doPost(e) {
 
 // テスト
 function test() {
-  console.log(getNowUrl());
+  registerUser(getUserEmail(), getUserName());
+  console.log("テスト完了");
 }
