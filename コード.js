@@ -27,6 +27,7 @@ function getUserName() {
 // メールを配信する
 function sendEmail(to, subject, body) {
   // MailApp.sendEmail(送信先, 件名, 本文);
+  // console.log(`メール送信先: ${to}\n件名: ${subject}\n本文: ${body}`);
 }
 
 // 特定のユーザーの発表順番を取得
@@ -64,6 +65,13 @@ function triggerSendEmailToAllUsers() {
 function registerUser(userEmail, userName) {
   // sheetに[userEmail, userName, null, null, null]を追加
   sheet.appendRow([userEmail, userName, null, null, null]);
+}
+
+// 登録完了メール
+function sendRegistrationCompleteEmail(userEmail, userName) {
+  let subject = "発表順番管理ツール ZemiPress ユーザー登録完了のお知らせ";
+  let body = `${userName}さん\nZemiPressへのユーザー登録が完了しました。\nhttps://script.google.com/a/macros/oit.ac.jp/s/AKfycbwiyeXQoOj--_So-Xsfc8SiRT1P9wpFj7vF2ViHA7tc3gFmyxPPoUGidXxEwkVB35f3/exec\n※これはZemiPressからの自動送信メールです。`;
+  sendEmail(userEmail, subject, body);
 }
 
 // ユーザーが登録されているか確認
@@ -147,7 +155,7 @@ function resetStatus() {
   }
 }
 
-// ステータスを更新する（出席）
+// ステータスを更新する（出欠）
 function updateAttendanceStatus(userEmail, status) {
   // sheetのuserEmailの出欠ステータスをstatusに更新する
   let data = sheet.getDataRange().getValues();
@@ -157,6 +165,13 @@ function updateAttendanceStatus(userEmail, status) {
       break;
     }
   }
+}
+
+// ステータス更新完了メール
+function sendStatusUpdateCompleteEmail(userEmail, userName, status) {
+  let subject = "発表順番管理ツール ZemiPress ステータス更新完了のお知らせ";
+  let body = `${userName}さん\nZemiPressの出欠状況が「${status}」に更新されました。\nhttps://script.google.com/a/macros/oit.ac.jp/s/AKfycbwiyeXQoOj--_So-Xsfc8SiRT1P9wpFj7vF2ViHA7tc3gFmyxPPoUGidXxEwkVB35f3/exec\n※これはZemiPressからの自動送信メールです。`;
+  sendEmail(userEmail, subject, body);
 }
 
 // // ステータスを更新する（発表済み）
@@ -253,6 +268,9 @@ function doPost(e) {
     // ユーザー登録
     registerUser(getUserEmail(), getUserName());
 
+    // 登録完了メール送信
+    sendRegistrationCompleteEmail(getUserEmail(), getUserName());
+
     return doGet(e, msg = "ユーザー登録が完了しました。");
   }
 
@@ -263,6 +281,9 @@ function doPost(e) {
 
     // 出欠ステータス更新
     updateAttendanceStatus(getUserEmail(), attendanceList[attendance]);
+
+    // ステータス更新完了メール送信
+    sendStatusUpdateCompleteEmail(getUserEmail(), getUserName(), attendanceList[attendance]);
 
     return doGet(e, msg = "出欠ステータスを更新しました。");
   }
