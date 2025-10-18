@@ -43,7 +43,13 @@ function registerUser(userEmail, userName) {
 // ユーザーが登録されているか確認
 function isUserRegistered(userEmail) {
   // sheetにuserEmailが存在するか確認し、存在すればtrue、存在しなければfalseを返す
-  return true;
+  let data = sheet.getDataRange().getValues();
+  for (let i = 0; i < data.length; i++) {
+    if (data[i][0] === userEmail) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // DBから全ユーザー情報を取得
@@ -184,6 +190,6 @@ function doPost(e) {
 
 // テスト
 function test() {
-  registerUser(getUserEmail(), getUserName());
-  console.log("テスト完了");
+  console.log(isUserRegistered('e1q23000@example.com'));
+  console.log(isUserRegistered('e1q24000@example.com'));
 }
