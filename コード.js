@@ -29,6 +29,11 @@ function sendEmail(to, subject, body) {
   // MailApp.sendEmail(送信先, 件名, 本文);
 }
 
+// 全体にメールを送信する
+function sendEmailToAllUsers(subject, body) {
+  // sheetから全ユーザーのメールアドレスを取得し、sendEmail関数で一括送信する
+}
+
 // ユーザー登録
 function registerUser(userEmail, userName) {
   // sheetに[userEmail, userName, null, null, null]を追加
@@ -67,10 +72,10 @@ function updateAttendanceStatus(userEmail, status) {
   // sheetのuserEmailの出欠ステータスをstatusに更新する
 }
 
-// ステータスを更新する（発表済み）
-function updatePresentationStatus(userEmail, status) {
-  // sheetのuserEmailの発表ステータスをstatusに更新する
-}
+// // ステータスを更新する（発表済み）
+// function updatePresentationStatus(userEmail, status) {
+//   // sheetのuserEmailの発表ステータスをstatusに更新する
+// }
 
 // パスコードを取得
 function getPasscode() {
