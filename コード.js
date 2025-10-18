@@ -71,8 +71,12 @@ function getAllUsers() {
 
 // データを発表順に並び変えて取得
 function getUsersByPresentationOrder() {
-  // sheetから発表順に並び変えた{email: '', name: '', attendance: '', presentation: ''}の配列を返す
-  return [{ email: 'e1q230000@example.com', name: '北海道 太郎', attendance: '出席', presentation: null }];
+  // sheetから発表順に並び変えた{email: '', name: '', attendance: '', presentation: '', number: ''}の配列を返す
+  let users = getAllUsers();
+  users.sort((a, b) => {
+    return a.number - b.number;
+  });
+  return users;
 }
 
 // 発表順をランダムに割り振る
@@ -201,5 +205,5 @@ function doPost(e) {
 
 // テスト
 function test() {
-  console.log(getAllUsers());
+  console.log(getUsersByPresentationOrder());
 }
