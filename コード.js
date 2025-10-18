@@ -168,6 +168,7 @@ function getCurrentTime() {
 function recordLastUpdatedTime() {
   // 現在時刻を更新時刻として記録
   let currentTime = getCurrentTime();
+  spred.getSheetByName('lastUpdated').getRange('A1').setValue(currentTime);
 }
 
 // Webアプリのメイン処理
@@ -244,6 +245,5 @@ function doPost(e) {
 
 // テスト
 function test() {
-  Logger.log(getPasscode());
-  Logger.log(getLastUpdatedTime());
+  recordLastUpdatedTime();
 }
