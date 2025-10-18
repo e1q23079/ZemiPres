@@ -1,0 +1,30 @@
+name: Deploy to Google Apps Script
+
+on:
+  push:
+    branches: ["main"]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+      CLASP_JSON: ${{ secrets.CLASP_JSON }}
+      PRODUCTION_DEPLOYMENT_ID: ${{ secrets.PRODUCTION_DEPLOYMENT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install clasp credentials
+        run: npm install -g @google/clasp
+      - name: Create clasprc.json
+        run: echo "$CLASPRC_JSON" > ~/.clasprc.json
+      - name: Create clasp.json
+        run: echo "$CLASP_JSON" > .clasp.json
+      - name: Deploy to Google Apps Script
+        run: |
+          clasp push --force
+          clasp deploy --deploymentId "$PRODUCTION_DEPLOYMENT_ID" --description "本番環境"

@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "@google/clasp": "^3.1.0",
+    "cross-var": "^1.1.0",
+    "dotenv-cli": "^10.0.0"
+  },
+  "scripts": {
+    "push": "clasp push -f",
+    "deploy-product": "dotenv -e .env cross-var \"clasp push -f && clasp deploy --deploymentId $PRODUCTION_DEPLOYMENT_ID --description 本番環境\"",
+    "deploy-dev01": "dotenv -e .env cross-var \"clasp push -f && clasp deploy --deploymentId $DEVELOPMENT01_DEPLOYMENT_ID --description 開発環境01\"",
+    "deploy-dev02": "dotenv -e .env cross-var \"clasp push -f && clasp deploy --deploymentId $DEVELOPMENT02_DEPLOYMENT_ID --description 開発環境02\""
+  }
+}
