@@ -113,6 +113,12 @@ function assignPresentationOrder() {
 // ステータスをリセットする
 function resetStatus() {
   // sheetの全ユーザーの出欠、発表ステータス、発表順をリセットする
+  let data = sheet.getDataRange().getValues();
+  for (let i = 0; i < data.length; i++) {
+    sheet.getRange(i + 1, 3).setValue("出席");
+    sheet.getRange(i + 1, 4).setValue(null);
+    sheet.getRange(i + 1, 5).setValue(null);
+  }
 }
 
 // ステータスを更新する（出席）
@@ -231,5 +237,5 @@ function doPost(e) {
 
 // テスト
 function test() {
-  Logger.log(assignPresentationOrder());
+  Logger.log(resetStatus());
 }
