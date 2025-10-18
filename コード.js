@@ -141,7 +141,7 @@ function updateAttendanceStatus(userEmail, status) {
 // パスコードを取得
 function getPasscode() {
   // 認証用パスコード
-  const passcode = spred.getSheetByName('config').getRange('B1').getValue();
+  const passcode = spred.getSheetByName('passcode').getRange('A1').getValue();
   return passcode;
 }
 
@@ -155,7 +155,7 @@ function authenticatePasscode(passcode) {
 // 更新時刻取得
 function getLastUpdatedTime() {
   // 更新時刻をseetから取得して返す
-  return "2024-01-01 12:00:00";
+  return spred.getSheetByName('lastUpdated').getRange('A1').getValue();
 }
 
 // 現在の時刻を取得
@@ -244,6 +244,6 @@ function doPost(e) {
 
 // テスト
 function test() {
-  Logger.log(updateAttendanceStatus("e1q23000@example.com", "出席"));
-  Logger.log(updateAttendanceStatus("e1q24000@example.com", "欠席"));
+  Logger.log(getPasscode());
+  Logger.log(getLastUpdatedTime());
 }
