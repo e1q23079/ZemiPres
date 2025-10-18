@@ -55,10 +55,15 @@ function sendEmailToAllUsers() {
 
 // トリガー処理
 function triggerSendEmailToAllUsers() {
-  resetStatus();  // ステータスリセット
-  assignPresentationOrder();  // 発表順をランダムに割り振る
-  recordLastUpdatedTime();  // 更新時刻記録
-  sendEmailToAllUsers();
+  if (getConfig() === "on") {
+    resetStatus();  // ステータスリセット
+    assignPresentationOrder();  // 発表順をランダムに割り振る
+    recordLastUpdatedTime();  // 更新時刻記録
+    sendEmailToAllUsers();
+    console.log("トリガーが実行されました。");
+  } else {
+    console.log("トリガーは無効化されています。");
+  }
 }
 
 // ユーザー登録
