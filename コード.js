@@ -228,7 +228,7 @@ function doGet(e, msg = "") {
   // メッセージをテンプレートに渡す
   const html = template.evaluate();
   // HTML出力の設定
-  html.setTitle("ZemiPress");  //  タイトル設定
+  html.setTitle("ZemiPres");  //  タイトル設定
   //  スタイル設定
   html.addMetaTag('viewport', 'width=device-width, initial-scale=1');  //  スマホ対応
 
