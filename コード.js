@@ -456,7 +456,10 @@ function getLastUpdatedTime() {
     lastUpdatedTime = json.results[0].properties.updated_time.date.start;
   }
 
-  return lastUpdatedTime;
+  const updateDate = new Date(lastUpdatedTime);
+  const formattedTime = Utilities.formatDate(updateDate, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
+
+  return formattedTime;
 }
 
 // 現在の時刻を取得
