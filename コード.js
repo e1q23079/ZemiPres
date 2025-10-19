@@ -72,7 +72,7 @@ function sendEmailToAllUsers() {
   let subject = "発表順番管理ツール ZemiPress からのお知らせ";
 
   for (let i = 0; i < users.length; i++) {
-    let body = `${getLastUpdatedTime()}に、発表の順番が更新されました。\n${users[i].name}さんは${getUserPresentationOrder(users[i].email)}番目の発表です。\n詳細は、ZemiPressをご確認ください。\nhttps://script.google.com/a/macros/oit.ac.jp/s/AKfycbwiyeXQoOj--_So-Xsfc8SiRT1P9wpFj7vF2ViHA7tc3gFmyxPPoUGidXxEwkVB35f3/exec\nまた、明日の発表を欠席される方は、欠席申請をお願いいたします。\n※これはZemiPressからの一斉メールです。`;
+    let body = `発表の順番が更新されました。\n${users[i].name}さんは${getUserPresentationOrder(users[i].email)}番目の発表です。\n詳細は、ZemiPressをご確認ください。\nhttps://script.google.com/a/macros/oit.ac.jp/s/AKfycbwiyeXQoOj--_So-Xsfc8SiRT1P9wpFj7vF2ViHA7tc3gFmyxPPoUGidXxEwkVB35f3/exec\nまた、明日の発表を欠席される方は、欠席申請をお願いいたします。\n最終更新時刻：${getLastUpdatedTime()}\n※これはZemiPressからの一斉メールです。`;
     sendEmail(users[i].email, subject, body);
   }
 
