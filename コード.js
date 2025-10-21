@@ -611,8 +611,9 @@ function doPost(e) {
 
       // 登録完了メール送信
       sendRegistrationCompleteEmail(getUserEmail(), getUserName());
+
+      return doGet(e, msg = "ユーザー登録が完了しました。");
     }
-    return doGet(e, msg = "ユーザー登録が完了しました。");
 
   }
 
