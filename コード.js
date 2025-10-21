@@ -11,8 +11,8 @@
 
 // DBへの接続設定
 const notionToken = PropertiesService.getScriptProperties().getProperty('NOTION_TOKEN');
-const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_TEST'); // 開発環境
-// const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_PRODUCT'); // 本番環境
+// const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_TEST'); // 開発環境
+const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_PRODUCT'); // 本番環境
 
 const lastUpdatedDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_LAST_UPDATED_DATABASE_ID'); // 更新時刻管理用DB
 
@@ -26,18 +26,41 @@ function getNowUrl() {
 
 // Googleアカウントでログインしているユーザーのメールアドレスを取得
 function getUserEmail() {
-  return "e1q23000@example.com";
+  const UserEmail = Session.getActiveUser().getEmail();
+  return UserEmail;
 }
 
 // Googleアカウントでログインしているユーザーの名前を取得
 function getUserName() {
-  return "北海道 太郎";
+  try {
+    // People API でログインユーザーの情報を取得
+    const profile = People.People.get('people/me', {
+      personFields: 'names'
+    });
+
+    if (profile.names && profile.names.length > 0) {
+      return profile.names[0].displayName;
+    }
+
+    return 'Unknown User';
+  } catch (e) {
+    Logger.log('エラー: ' + e);
+    return Session.getActiveUser().getEmail(); // フォールバック
+  }
 }
 
 // メールを配信する
 function sendEmail(to, subject, body) {
   // MailApp.sendEmail(送信先, 件名, 本文);
   // console.log(`メール送信先: ${to}\n件名: ${subject}\n本文: ${body}`);
+  /*const mailOptions = {
+  from: 'your-email@gmail.com',
+  to: to,
+  subject: subject,
+  text: body
+};*/
+  MailApp.sendEmail(to, subject, body);
+  // MailApp.sendEmail(送信先, 件名, 本文);
 }
 
 // 特定のユーザーの発表順番を取得
@@ -61,8 +84,8 @@ function getUserPresentationOrder(userEmail) {
   }
 
   return null;
-
 }
+
 
 // 全体にメールを送信する
 function sendEmailToAllUsers() {
@@ -91,6 +114,16 @@ function triggerSendEmailToAllUsers() {
     console.log("トリガーは無効化されています。");
   }
 }
+
+// // sheetから全ユーザーのメールアドレスを取得し、sendEmail関数で一括送信する
+// function sendEmailToAllUsers(subject, body) {
+//   const users = getAllUsers();
+//   const emailList = users.map(user => user.email);
+//   const uniqueEmailList = [...new Set(emailList)];
+//   uniqueEmailList.forEach(email => {
+//     sendEmail(email, subject, body);
+//   });
+// }
 
 // ユーザー登録
 function registerUser(userEmail, userName) {
@@ -422,6 +455,9 @@ function getPasscode() {
 function authenticatePasscode(passcode) {
   // 正しいパスコードと比較して認証する
   let correctPasscode = getPasscode();
+  if (passcode != correctPasscode) {
+    return false;
+  }
   return true;
 }
 
@@ -468,7 +504,14 @@ function getLastUpdatedTime() {
 // 現在の時刻を取得
 function getCurrentTime() {
   // 現在の時刻を返す
-  return "2024-01-02 14:30:00";
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getDate()).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 // 更新時刻記録
@@ -594,4 +637,6 @@ function getConfig() {
 // テスト
 function test() {
   console.log(getConfig());
+  console.log(getUserEmail());
+  console.log(getUserName());
 }
