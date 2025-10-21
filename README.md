@@ -79,6 +79,25 @@ npm run deploy-dev02
 npm run deploy-product
 ```
 
+### スクリプトプロパティの設定
+
+このプロジェクトでは、Google Apps Script の **スクリプトプロパティ** を使用して、外部サービスの認証情報や設定値を管理しています。  
+設定するプロパティは以下の通りです。
+
+| プロパティ名 | 説明 |
+|--------------|------|
+| `NOTION_TOKEN` | Notion API にアクセスするための統合（Integration）トークン。Notion のデータベース操作に必要です。 |
+| `NOTION_DATABASE_ID_TEST` | テスト用 Notion データベースの ID。開発環境でデータ取得・更新に使用します。 |
+| `NOTION_DATABASE_ID_PRODUCT` | 本番用 Notion データベースの ID。本番環境でのデータ取得・更新に使用します。 |
+| `NOTION_LAST_UPDATED_DATABASE_ID` | 最終更新時刻を記録する Notion データベースの ID。更新履歴管理に使用します。 |
+| `PASSCODE` | Web アプリなどで利用する簡易認証パスコード。ユーザー操作を制限したい場合に使用します。 |
+| `TRIGGER_STATUS` | 定期実行（トリガー）の ON/OFF 状態を管理するフラグ。自動実行処理の制御に使用します。 |
+
+#### 設定方法
+
+1. Google Apps Script エディタで `プロジェクトの設定` → `スクリプトのプロパティ` を開く
+2. 上記のプロパティ名と値を追加する
+
 ## GitHub Actionsでの自動デプロイ
 
 GitHub Actionsを使用して自動デプロイを設定する場合、以下の手順でシークレットを登録してください。
