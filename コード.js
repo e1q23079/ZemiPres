@@ -602,13 +602,19 @@ function doPost(e) {
       return doGet(e, msg = "認証用パスコードが間違っています。");
     }
 
-    // ユーザー登録
-    registerUser(getUserEmail(), getUserName());
+    // 既に登録されている場合はエラー
+    if (isUserRegistered(getUserEmail())) {
+      return doGet(e, msg = "既にユーザー登録されています。");
+    } else {
+      // ユーザー登録
+      registerUser(getUserEmail(), getUserName());
 
-    // 登録完了メール送信
-    sendRegistrationCompleteEmail(getUserEmail(), getUserName());
+      // 登録完了メール送信
+      sendRegistrationCompleteEmail(getUserEmail(), getUserName());
 
-    return doGet(e, msg = "ユーザー登録が完了しました。");
+      return doGet(e, msg = "ユーザー登録が完了しました。");
+    }
+
   }
 
   // 出欠ステータス更新
