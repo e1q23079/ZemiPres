@@ -11,8 +11,8 @@
 
 // DBへの接続設定
 const notionToken = PropertiesService.getScriptProperties().getProperty('NOTION_TOKEN');
-// const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_TEST'); // 開発環境
-const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_PRODUCT'); // 本番環境
+const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_TEST'); // 開発環境
+// const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_PRODUCT'); // 本番環境
 
 const lastUpdatedDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_LAST_UPDATED_DATABASE_ID'); // 更新時刻管理用DB
 
