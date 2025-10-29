@@ -11,8 +11,8 @@
 
 // DBへの接続設定
 const notionToken = PropertiesService.getScriptProperties().getProperty('NOTION_TOKEN');
-// const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_TEST'); // 開発環境
-const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_PRODUCT'); // 本番環境
+const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_TEST'); // 開発環境
+// const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_PRODUCT'); // 本番環境
 
 const lastUpdatedDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_LAST_UPDATED_DATABASE_ID'); // 更新時刻管理用DB
 
@@ -567,15 +567,11 @@ function doGet(e, msg = "") {
   }
 
   // HTMLテンプレートの取得
-  const template = HtmlService.createTemplateFromFile(file);
+  let template = HtmlService.createTemplateFromFile(file);
 
-  /* メッセージをテンプレートにセット */
-  template.url = getNowUrl();
+  // テンプレートにデータをセット
   template.msg = msg;
-  template.usersByPresentationOrder = getUsersByPresentationOrder();
-  template.userName = getUserName();
-  template.userEmail = getUserEmail();
-  template.lastUpdatedTime = getLastUpdatedTime();
+  template = getTemplateData(template);
 
   // メッセージをテンプレートに渡す
   const html = template.evaluate();
@@ -586,6 +582,16 @@ function doGet(e, msg = "") {
 
   return html;
 
+}
+
+// HTMLテンプレートにセットし取得
+function getTemplateData(template) {
+  template.url = getNowUrl();
+  template.usersByPresentationOrder = getUsersByPresentationOrder();
+  template.userName = getUserName();
+  template.userEmail = getUserEmail();
+  template.lastUpdatedTime = getLastUpdatedTime();
+  return template;
 }
 
 function doPost(e) {
@@ -638,6 +644,13 @@ function getConfig() {
   // return spred.getSheetByName('config').getRange('A1').getValue();
   // スクリプトプロパティから取得
   return PropertiesService.getScriptProperties().getProperty('TRIGGER_STATUS');
+}
+
+// include用関数
+function include(filename) {
+  let template = HtmlService.createTemplateFromFile(filename);
+  template = getTemplateData(template);
+  return template.evaluate().getContent();
 }
 
 // テスト
