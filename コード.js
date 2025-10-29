@@ -640,6 +640,11 @@ function getConfig() {
   return PropertiesService.getScriptProperties().getProperty('TRIGGER_STATUS');
 }
 
+// include用関数
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+
 // テスト
 function test() {
   console.log(getConfig());
