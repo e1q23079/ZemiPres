@@ -642,7 +642,10 @@ function getConfig() {
 
 // include用関数
 function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+  const template = HtmlService.createTemplateFromFile(filename);
+  template.url = getNowUrl();
+  template.userName = getUserName();
+  return template.evaluate().getContent();
 }
 
 // テスト
