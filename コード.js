@@ -567,15 +567,11 @@ function doGet(e, msg = "") {
   }
 
   // HTMLテンプレートの取得
-  const template = HtmlService.createTemplateFromFile(file);
+  let template = HtmlService.createTemplateFromFile(file);
 
-  /* メッセージをテンプレートにセット */
-  template.url = getNowUrl();
+  // テンプレートにデータをセット
   template.msg = msg;
-  template.usersByPresentationOrder = getUsersByPresentationOrder();
-  template.userName = getUserName();
-  template.userEmail = getUserEmail();
-  template.lastUpdatedTime = getLastUpdatedTime();
+  template = getTemplateData(template);
 
   // メッセージをテンプレートに渡す
   const html = template.evaluate();
@@ -586,6 +582,16 @@ function doGet(e, msg = "") {
 
   return html;
 
+}
+
+// HTMLテンプレートにセットし取得
+function getTemplateData(template) {
+  template.url = getNowUrl();
+  template.usersByPresentationOrder = getUsersByPresentationOrder();
+  template.userName = getUserName();
+  template.userEmail = getUserEmail();
+  template.lastUpdatedTime = getLastUpdatedTime();
+  return template;
 }
 
 function doPost(e) {
@@ -642,9 +648,8 @@ function getConfig() {
 
 // include用関数
 function include(filename) {
-  const template = HtmlService.createTemplateFromFile(filename);
-  template.url = getNowUrl();
-  template.userName = getUserName();
+  let template = HtmlService.createTemplateFromFile(filename);
+  template = getTemplateData(template);
   return template.evaluate().getContent();
 }
 
