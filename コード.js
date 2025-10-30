@@ -552,6 +552,93 @@ function getCurrentTime() {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+// 表示切替
+function toggleDisplayStatus(status) {
+
+  const properties = {
+    display: {
+      select: { name: status ? "表示" : "非表示" }
+    }
+  }
+
+  const notionHeaders = {
+    method: 'post',
+    headers: {
+      'Authorization': `Bearer ${notionToken}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json'
+    },
+    payload:
+      JSON.stringify({
+        "sorts": [
+          {
+            "property": "updated_time",
+            "direction": "descending"
+          }
+        ],
+        "page_size": 1
+      }),
+    muteHttpExceptions: true
+  };
+
+  const response = UrlFetchApp.fetch(`https://api.notion.com/v1/databases/${lastUpdatedDatabaseId}/query`, notionHeaders);
+  const json = JSON.parse(response.getContentText());
+  let updateId;
+
+  if (json.results.length > 0) {
+    updateId = json.results[0].id;
+    const notionHeaders = {
+      method: 'patch',
+      headers: {
+        'Authorization': `Bearer ${notionToken}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+      },
+      payload:
+        JSON.stringify({
+          properties: properties
+        }),
+      muteHttpExceptions: true
+    };
+    UrlFetchApp.fetch(`${notionApiUrlPage}/${updateId}`, notionHeaders);
+  }
+}
+
+// 表示フラグ取得
+function getDisplayStatus() {
+
+  const notionHeaders = {
+    method: 'post',
+    headers: {
+      'Authorization': `Bearer ${notionToken}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json'
+    },
+    payload:
+      JSON.stringify({
+        "sorts": [
+          {
+            "property": "updated_time",
+            "direction": "descending"
+          }
+        ],
+        "page_size": 1
+      }),
+    muteHttpExceptions: true
+  };
+
+  const response = UrlFetchApp.fetch(`https://api.notion.com/v1/databases/${lastUpdatedDatabaseId}/query`, notionHeaders);
+  const json = JSON.parse(response.getContentText());
+  let status = null;
+
+  if (json.results.length > 0) {
+    status = json.results[0].properties.display.select.name;
+  }
+
+  return status === "表示" ? true : false;
+
+}
+
 // 更新時刻記録
 function recordLastUpdatedTime() {
   // 現在時刻を更新時刻として記録
@@ -585,6 +672,8 @@ function recordLastUpdatedTime() {
     muteHttpExceptions: true
   };
   UrlFetchApp.fetch(notionApiUrlPage, notionHeaders);
+
+  toggleDisplayStatus(true); // 表示切替を「表示」に設定
 }
 
 // Webアプリのメイン処理
