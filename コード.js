@@ -700,6 +700,11 @@ function doGet(e, msg = "") {
     file = 'register';
   }
 
+  // 表示ステータスがfalseならcloseページへ強制遷移
+  /*
+    実装 
+  */
+
   // HTMLテンプレートの取得
   let template = HtmlService.createTemplateFromFile(file);
 
