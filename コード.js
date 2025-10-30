@@ -256,18 +256,8 @@ function getUsersByPresentationOrder() {
   return users;
 }
 
-// 発表順を更新する
-function updatePresentationOrder(userEmail, orderNumber) {
-  // // sheetのuserEmailの発表順をorderNumberに更新する
-  // let data = sheet.getDataRange().getValues();
-  // for (let i = 0; i < data.length; i++) {
-  //   if (data[i][0] === userEmail) {
-  //     sheet.getRange(i + 1, 5).setValue(orderNumber);
-  //     break;
-  //   }
-  // }
-
-  // NotionAPIで発表順を更新する
+// NotionDBのデータを編集
+function editNotionData(userEmail, properties) {
   const users = getAllUsers();
   let pageId = null;
   for (let i = 0; i < users.length; i++) {
@@ -287,17 +277,33 @@ function updatePresentationOrder(userEmail, orderNumber) {
       },
       payload:
         JSON.stringify({
-          properties: {
-            number: {
-
-              number: orderNumber
-            }
-          }
+          properties: properties
         }),
       muteHttpExceptions: true
     };
     UrlFetchApp.fetch(`${notionApiUrlPage}/${pageId}`, notionHeaders);
   }
+}
+
+// 発表順を更新する
+function updatePresentationOrder(userEmail, orderNumber) {
+  // // sheetのuserEmailの発表順をorderNumberに更新する
+  // let data = sheet.getDataRange().getValues();
+  // for (let i = 0; i < data.length; i++) {
+  //   if (data[i][0] === userEmail) {
+  //     sheet.getRange(i + 1, 5).setValue(orderNumber);
+  //     break;
+  //   }
+  // }
+
+  // NotionAPIで発表順を更新する
+  const properties = {
+    number: {
+      number: orderNumber
+    }
+  }
+
+  editNotionData(userEmail, properties);
 
 }
 
