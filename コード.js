@@ -385,6 +385,11 @@ function resetStatus() {
 
 }
 
+// 前半希望者を入れ替え
+function swapFirstHalfApplicants() {
+  // 未実装
+}
+
 // ステータスを更新する（出欠）
 function updateAttendanceStatus(userEmail, status) {
   // sheetのuserEmailの出欠ステータスをstatusに更新する
