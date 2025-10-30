@@ -125,12 +125,8 @@ function triggerSendEmailToAllUsers() {
 //   });
 // }
 
-// ユーザー登録
-function registerUser(userEmail, userName) {
-  // sheetに[userEmail, userName, null, null, null]を追加
-  // sheet.appendRow([userEmail, userName, null, null, null]);
-
-  // NotionAPIでユーザー登録
+// NotionDBにユーザーを追加
+function addUserToNotion(properties) {
   const notionHeaders = {
     method: 'post',
     headers: {
@@ -141,27 +137,39 @@ function registerUser(userEmail, userName) {
     payload:
       JSON.stringify({
         parent: { database_id: notionDatabaseId },
-        properties: {
-          name: {
-            title: [
-              { text: { content: userName } }
-            ]
-          },
-          email: {
-            email: userEmail
-          },
-          attendance: {
-            select: { name: "出席" }
-          },
-          number: {
-            number: null
-          }
-        }
+        properties: properties
+
       }),
     muteHttpExceptions: true
   };
 
   UrlFetchApp.fetch(notionApiUrlPage, notionHeaders);
+}
+
+// ユーザー登録
+function registerUser(userEmail, userName) {
+  // sheetに[userEmail, userName, null, null, null]を追加
+  // sheet.appendRow([userEmail, userName, null, null, null]);
+
+  // NotionAPIでユーザー登録
+  const properties = {
+    name: {
+      title: [
+        { text: { content: userName } }
+      ]
+    },
+    email: {
+      email: userEmail
+    },
+    attendance: {
+      select: { name: "出席" }
+    },
+    number: {
+      number: null
+    }
+  }
+
+  addUserToNotion(properties);
 
 }
 
