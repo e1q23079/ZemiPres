@@ -770,6 +770,11 @@ function doPost(e) {
     // 出欠ステータス更新
     updateAttendanceStatus(getUserEmail(), attendanceList[attendance]);
 
+    // 前半希望時の処理
+    /*
+      未実装
+    */
+
     // ステータス更新完了メール送信
     sendStatusUpdateCompleteEmail(getUserEmail(), getUserName(), attendanceList[attendance]);
 
