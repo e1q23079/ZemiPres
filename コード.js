@@ -260,9 +260,9 @@ function getUsersByPresentationOrder() {
 function editNotionData(userEmail, properties) {
   const users = getAllUsers();
   let pageId = null;
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].email === userEmail) {
-      pageId = users[i].pageId;
+  for (let user of users) {
+    if (user.email === userEmail) {
+      pageId = user.pageId;
       break;
     }
   }
