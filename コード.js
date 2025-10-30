@@ -429,36 +429,42 @@ function updateAttendanceStatus(userEmail, status) {
   // }
 
   // NotionAPIで出欠ステータスを更新する
-  const users = getAllUsers();
-  let pageId = null;
+  // const users = getAllUsers();
+  // let pageId = null;
 
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].email === userEmail) {
-      pageId = users[i].pageId;
-      break;
+  // for (let i = 0; i < users.length; i++) {
+  //   if (users[i].email === userEmail) {
+  //     pageId = users[i].pageId;
+  //     break;
+  //   }
+  // }
+
+  // if (pageId) {
+  //   const notionHeaders = {
+  //     method: 'patch',
+  //     headers: {
+  //       'Authorization': `Bearer ${notionToken}`,
+  //       'Notion-Version': '2022-06-28',
+  //       'Content-Type': 'application/json'
+  //     },
+  //     payload:
+  //       JSON.stringify({
+  //         properties: {
+  //           attendance: {
+  //             select: { name: status }
+  //           }
+  //         }
+  //       }),
+  //     muteHttpExceptions: true
+  //   };
+  //   UrlFetchApp.fetch(`${notionApiUrlPage}/${pageId}`, notionHeaders);
+  // }
+  const properties = {
+    attendance: {
+      select: { name: status }
     }
   }
-
-  if (pageId) {
-    const notionHeaders = {
-      method: 'patch',
-      headers: {
-        'Authorization': `Bearer ${notionToken}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json'
-      },
-      payload:
-        JSON.stringify({
-          properties: {
-            attendance: {
-              select: { name: status }
-            }
-          }
-        }),
-      muteHttpExceptions: true
-    };
-    UrlFetchApp.fetch(`${notionApiUrlPage}/${pageId}`, notionHeaders);
-  }
+  editNotionData(userEmail, properties);
 }
 
 // ステータス更新完了メール
