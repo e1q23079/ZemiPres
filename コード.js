@@ -9,13 +9,19 @@
 // const sheet = spred.getSheetByName('test'); // 開発環境
 // const sheet = spred.getSheetByName('product'); // 本番環境
 
+// 開発環境フラグ
+const develop = true; // true: 開発環境, false: 本番環境
+
 // DBへの接続設定
 const notionToken = PropertiesService.getScriptProperties().getProperty('NOTION_TOKEN');
-const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_TEST'); // 開発環境
-// const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_PRODUCT'); // 本番環境
-const lastUpdatedDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_LAST_UPDATED_DATABASE_ID_DEV'); // 開発用更新時刻管理用DB
-// const lastUpdatedDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_LAST_UPDATED_DATABASE_ID'); // 本番用更新時刻管理用DB
-
+let notionDatabaseId, lastUpdatedDatabaseId;
+if (develop) {
+  notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_TEST'); // 開発環境
+  lastUpdatedDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_LAST_UPDATED_DATABASE_ID_DEV'); // 開発用更新時刻管理用DB
+} else {
+  notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_PRODUCT'); // 本番環境
+  lastUpdatedDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_LAST_UPDATED_DATABASE_ID'); // 本番用更新時刻管理用DB
+}
 
 const notionApiUrlQuery = `https://api.notion.com/v1/databases/${notionDatabaseId}/query`;
 const notionApiUrlPage = `https://api.notion.com/v1/pages`;
