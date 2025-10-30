@@ -122,6 +122,10 @@ function triggerSendEmailToAllUsers() {
   }
 }
 
+function triggerSetDisplayFalse() {
+  toggleDisplayStatus(false); // 表示切替を「非表示」に設定
+}
+
 // // sheetから全ユーザーのメールアドレスを取得し、sendEmail関数で一括送信する
 // function sendEmailToAllUsers(subject, body) {
 //   const users = getAllUsers();
