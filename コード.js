@@ -339,24 +339,25 @@ function assignPresentationOrder() {
   }
   // 発表順を更新
   for (let i = 0; i < users.length; i++) {
-    const notionHeaders = {
-      method: 'patch',
-      headers: {
-        'Authorization': `Bearer ${notionToken}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json'
-      },
-      payload:
-        JSON.stringify({
-          properties: {
-            number: {
-              number: numbers[i]
-            }
-          }
-        }),
-      muteHttpExceptions: true
-    };
-    UrlFetchApp.fetch(`${notionApiUrlPage}/${users[i].pageId}`, notionHeaders);
+    // const notionHeaders = {
+    //   method: 'patch',
+    //   headers: {
+    //     'Authorization': `Bearer ${notionToken}`,
+    //     'Notion-Version': '2022-06-28',
+    //     'Content-Type': 'application/json'
+    //   },
+    //   payload:
+    //     JSON.stringify({
+    //       properties: {
+    //         number: {
+    //           number: numbers[i]
+    //         }
+    //       }
+    //     }),
+    //   muteHttpExceptions: true
+    // };
+    // UrlFetchApp.fetch(`${notionApiUrlPage}/${users[i].pageId}`, notionHeaders);
+    updatePresentationOrder(users[i].email, numbers[i]);
   }
 
 }
