@@ -77,9 +77,9 @@ function getUserPresentationOrder(userEmail) {
   // NotionAPIでuserEmailの発表順を取得して返す
   const users = getAllUsers();
 
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].email === userEmail) {
-      return users[i].number;
+  for (let user of users) {
+    if (user.email === userEmail) {
+      return user.number;
     }
   }
 
