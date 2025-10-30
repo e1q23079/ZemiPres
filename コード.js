@@ -192,8 +192,8 @@ function isUserRegistered(userEmail) {
 
   // NotionAPIでユーザー登録確認
   const users = getAllUsers();
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].email === userEmail) {
+  for (let user of users) {
+    if (user.email === userEmail) {
       return true;
     }
   }
