@@ -374,28 +374,40 @@ function resetStatus() {
 
   // NotionAPIでステータスリセット
   const users = getAllUsers();
-  for (let i = 0; i < users.length; i++) {
-    const notionHeaders = {
-      method: 'patch',
-      headers: {
-        'Authorization': `Bearer ${notionToken}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json'
+  // for (let i = 0; i < users.length; i++) {
+  //   const notionHeaders = {
+  //     method: 'patch',
+  //     headers: {
+  //       'Authorization': `Bearer ${notionToken}`,
+  //       'Notion-Version': '2022-06-28',
+  //       'Content-Type': 'application/json'
+  //     },
+  //     payload:
+  //       JSON.stringify({
+  //         properties: {
+  //           attendance: {
+  //             select: { name: "出席" }
+  //           },
+  //           number: {
+  //             number: null
+  //           }
+  //         }
+  //       }),
+  //     muteHttpExceptions: true
+  //   };
+  //   UrlFetchApp.fetch(`${notionApiUrlPage}/${users[i].pageId}`, notionHeaders);
+  // }
+
+  for (let user of users) {
+    const properties = {
+      attendance: {
+        select: { name: "出席" }
       },
-      payload:
-        JSON.stringify({
-          properties: {
-            attendance: {
-              select: { name: "出席" }
-            },
-            number: {
-              number: null
-            }
-          }
-        }),
-      muteHttpExceptions: true
-    };
-    UrlFetchApp.fetch(`${notionApiUrlPage}/${users[i].pageId}`, notionHeaders);
+      number: {
+        number: null
+      }
+    }
+    editNotionData(user.email, properties);
   }
 
 }
