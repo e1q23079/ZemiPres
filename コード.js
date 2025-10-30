@@ -420,7 +420,7 @@ function resetStatus() {
 }
 
 // 前半希望者を入れ替え
-function swapFirstHalfApplicants() {
+function swapFirstHalfApplicants(userEmail) {
   // 未実装
 }
 
