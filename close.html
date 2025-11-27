@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: rgb(246, 246, 246);
+            padding-top: 70px;
+        }
+
+        .user-name {
+            color: white;
+            padding-right: 10px;
+        }
+
+        .content-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .close-icon {
+            font-size: 5rem;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .close-message {
+            font-size: 1.5rem;
+            color: #495057;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .close-description {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+        </script>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <strong><a class="navbar-brand" href="<?!= url ?>">ZemiPres</a></strong>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="<?!= url ?>">ホーム</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="<?!= url ?>?page=formAttend">出欠申請</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="<?!= url ?>?page=profile">プロフィール</a>
+                    </li>
+                </ul>
+                <span class="navbar-text user-name">
+                    <?= userName ?>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <? if(msg!=""){ ?>
+    <div class="alert alert-primary" role="alert">
+        <?= msg ?>
+    </div>
+    <? } ?>
+
+    <!--------- コンテンツ部分 --------->
+    <!-- Copilotが作成しました -->
+    <div class="content-box">
+        <div class="close-icon">🔒</div>
+        <p class="close-message">現在、発表順は公開されていません</p>
+        <p class="close-description">利用期間外のため、発表順の表示を停止しています。<br>公開期間になりましたら再度アクセスしてください。</p>
+    </div>
+    <!--------------------------------->
+
+</html>
