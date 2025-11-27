@@ -706,9 +706,11 @@ function doGet(e, msg = "") {
   }
 
   // 表示ステータスがfalseならcloseページへ強制遷移
-  /*
-    実装 
-  */
+  /* ただし，プロフィールページは除く */
+  if (file !== 'profile' && !getDisplayStatus()) {
+    file = 'close';
+  }
+
 
   // HTMLテンプレートの取得
   let template = HtmlService.createTemplateFromFile(file);
