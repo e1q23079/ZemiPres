@@ -735,8 +735,9 @@ function getTemplateData(template) {
   template.userEmail = getUserEmail();
   template.lastUpdatedTime = getLastUpdatedTime();
   /* 広告 */
-  template.adImgSrc = getAd().imgSrc;
-  template.adUrl = getAd().url;
+  const ad = getAd();
+  template.adImgSrc = ad.imgSrc;
+  template.adUrl = ad.url;
   return template;
 }
 
@@ -822,7 +823,7 @@ function getAd() {
   // const imgSrc = "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png"
   // const url = "/"
   const adData = adJson[randomInt];
-  return { 'imgSrc': getUrlImageFromDrive(adData?.imgSrc), 'url': adData?.url };
+  return { 'imgSrc': getUrlImageFromDrive(adData?.imgSrc), 'url': adData?.url, 'description': adData?.description };
 }
 
 // テスト
