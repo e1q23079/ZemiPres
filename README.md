@@ -107,7 +107,7 @@ npm run deploy-product
 ]
 ```
 
-※`id`はGoogleドライブで画像を新しいタブで開いたときにURLに含まれる
+※`id`はGoogleドライブで画像を新しいタブで開いたときにURLに含まれるファイルIDです
 
 #### 設定方法
 
