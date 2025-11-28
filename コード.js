@@ -806,9 +806,17 @@ function include(filename) {
 
 // 広告を取得
 function getAd() {
-  const imgSrc = "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png"
-  const url = "/"
-  return { 'imgSrc': imgSrc, 'url': url };
+  /* adJson 
+    [{ 'imgSrc': '画像URL', 'url': 'URL','description': '説明文' }, ...]
+     サンプル広告
+     [   {     "imgSrc": "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png",     "url": "/",      "description": "サンプル広告"   } ]
+  */
+  const adJson = JSON.parse(PropertiesService.getScriptProperties().getProperty('AD'));
+  const randomInt = Math.floor(Math.random() * adJson.length);
+  // const imgSrc = "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png"
+  // const url = "/"
+  const adData = adJson[randomInt];
+  return { 'imgSrc': adData.imgSrc, 'url': adData.url };
 }
 
 // テスト
