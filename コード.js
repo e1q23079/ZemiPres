@@ -804,6 +804,12 @@ function include(filename) {
   return template.evaluate().getContent();
 }
 
+// Googleドライブから画像のURLを取得
+function getUrlImageFromDrive(fileId) {
+  const url = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+  return url;
+}
+
 // 広告を取得
 function getAd() {
   /* adJson 
@@ -816,7 +822,7 @@ function getAd() {
   // const imgSrc = "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png"
   // const url = "/"
   const adData = adJson[randomInt];
-  return { 'imgSrc': adData?.imgSrc, 'url': adData?.url };
+  return { 'imgSrc': getUrlImageFromDrive(adData?.imgSrc), 'url': adData?.url };
 }
 
 // テスト
