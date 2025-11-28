@@ -816,7 +816,7 @@ function getAd() {
   // const imgSrc = "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png"
   // const url = "/"
   const adData = adJson[randomInt];
-  return { 'imgSrc': adData.imgSrc, 'url': adData.url };
+  return { 'imgSrc': adData?.imgSrc, 'url': adData?.url };
 }
 
 // テスト
