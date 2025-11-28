@@ -807,7 +807,7 @@ function include(filename) {
 
 // Googleドライブから画像のURLを取得
 function getUrlImageFromDrive(fileId) {
-  const url = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+  const url = `https://drive.google.com/thumbnail?id=${fileId}&sz=w500`;
   return url;
 }
 
