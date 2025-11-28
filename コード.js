@@ -734,6 +734,9 @@ function getTemplateData(template) {
   template.userName = getUserName();
   template.userEmail = getUserEmail();
   template.lastUpdatedTime = getLastUpdatedTime();
+  /* 広告 */
+  template.adImgSrc = "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png";
+  template.adUrl = "exec?page=close";
   return template;
 }
 
