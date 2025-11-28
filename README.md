@@ -100,12 +100,14 @@ npm run deploy-product
 ```json
 [
  {
-  "imgSrc": "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png",
+  "imgSrc": "id",
   "url": "/",
   "description": "サンプル広告"
  }
 ]
 ```
+
+※`id`はGoogleドライブで画像を新しいタブで開いたときにURLに含まれる
 
 #### 設定方法
 
