@@ -100,7 +100,7 @@ npm run deploy-product
 ```json
 [
  {
-  "imgSrc": "id",
+  "imgSrc": "GoogleドライブのファイルID",
   "url": "/",
   "description": "サンプル広告"
  }
