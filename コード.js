@@ -813,9 +813,9 @@ function getUrlImageFromDrive(fileId) {
 // 広告を取得
 function getAd() {
   /* adJson 
-    [{ 'imgSrc': '画像URL', 'url': 'URL','description': '説明文' }, ...]
+    [{ 'imgSrc': '画像ID', 'url': 'URL','description': '説明文' }, ...]
      サンプル広告
-     [   {     "imgSrc": "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png",     "url": "/",      "description": "サンプル広告"   } ]
+     [   {     "imgSrc": "id",     "url": "/",      "description": "サンプル広告"   } ]
   */
   const adJson = JSON.parse(PropertiesService.getScriptProperties().getProperty('AD'));
   const randomInt = Math.floor(Math.random() * adJson.length);
