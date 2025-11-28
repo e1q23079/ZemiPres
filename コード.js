@@ -826,6 +826,20 @@ function getAd() {
   return { 'imgSrc': getUrlImageFromDrive(adData?.imgSrc), 'url': adData?.url, 'description': adData?.description };
 }
 
+// 広告JSONチェック
+function checkAdJson() {
+  try {
+    const adJson = JSON.parse(PropertiesService.getScriptProperties().getProperty('AD'));
+    console.log("広告JSONは有効です。");
+    adJson.forEach((ad, index) => {
+      console.log(`広告 ${index + 1}: 画像URL=${getUrlImageFromDrive(ad?.imgSrc)}, URL=${ad?.url}, 説明文=${ad?.description}`);
+    });
+  }
+  catch (e) {
+    console.log("広告JSONにエラーがあります: " + e);
+  }
+}
+
 // テスト
 function test() {
   console.log(getConfig());
