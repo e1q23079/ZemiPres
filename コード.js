@@ -735,8 +735,8 @@ function getTemplateData(template) {
   template.userEmail = getUserEmail();
   template.lastUpdatedTime = getLastUpdatedTime();
   /* 広告 */
-  template.adImgSrc = "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png";
-  template.adUrl = "exec?page=close";
+  template.adImgSrc = getAd().imgSrc;
+  template.adUrl = getAd().url;
   return template;
 }
 
@@ -802,6 +802,13 @@ function include(filename) {
   let template = HtmlService.createTemplateFromFile(filename);
   template = getTemplateData(template);
   return template.evaluate().getContent();
+}
+
+// 広告を取得
+function getAd() {
+  const imgSrc = "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png"
+  const url = "/"
+  return { 'imgSrc': imgSrc, 'url': url };
 }
 
 // テスト
