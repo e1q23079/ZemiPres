@@ -785,7 +785,7 @@ function doPost(e) {
     // ステータス更新完了メール送信
     sendStatusUpdateCompleteEmail(getUserEmail(), getUserName(), attendanceList[attendance]);
 
-    return doGet(e, msg = "出欠ステータスを更新しました。");
+    return doGet(e, msg = "ステータスを更新しました。");
   }
 
 }
