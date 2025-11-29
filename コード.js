@@ -811,6 +811,8 @@ function getUrlImageFromDrive(fileId) {
   return url;
 }
 
+const adView = []; // 広告表示履歴
+
 // 広告を取得
 function getAd() {
   /* adJson 
@@ -819,9 +821,18 @@ function getAd() {
      [   {     "imgSrc": "id",     "url": "/",      "description": "サンプル広告"   } ]
   */
   const adJson = JSON.parse(PropertiesService.getScriptProperties().getProperty('AD'));
-  const randomInt = Math.floor(Math.random() * adJson.length);
-  // const imgSrc = "https://raw.githubusercontent.com/e1q23079/ZemiPres/refs/heads/feature/ad/assets/ad_sample2.png"
-  // const url = "/"
+  let randomInt;
+  // 履歴にない広告が出るまでループ
+  while (true) {
+    randomInt = Math.floor(Math.random() * adJson.length);
+    if (!adView.includes(randomInt)) {
+      adView.push(randomInt);
+      break;
+    }
+    if (adView.length === adJson.length) {
+      adView.length = 0; // 履歴リセット
+    }
+  }
   const adData = adJson[randomInt];
   return { 'imgSrc': getUrlImageFromDrive(adData?.imgSrc), 'url': adData?.url, 'description': adData?.description };
 }
