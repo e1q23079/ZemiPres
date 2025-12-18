@@ -425,7 +425,31 @@ function resetStatus() {
 
 // 前半希望者を入れ替え
 function swapFirstHalfApplicants(userEmail) {
-  // 未実装
+  const users = getAllUsers();
+  users.sort((a, b) => a.number - b.number);
+
+  const targetUser = users.find(u => u.email === userEmail);
+  const otherUsers = users.filter(u => u.email !== userEmail);
+
+  if (!targetUser) {
+    return;
+  }
+
+  const sotedUsers = [targetUser, ...otherUsers];
+
+  sotedUsers.forEach((user, index) => {
+    const newNumber = index + 1;
+
+    if (user.number !== newNumber) {
+      const properties = {
+        number: {
+          number: newNumber
+        }
+      };
+      editNotionData(user.email, properties);
+    }
+  });
+
 }
 
 // ステータスを更新する（出欠）
@@ -769,20 +793,27 @@ function doPost(e) {
   // 出欠ステータス更新
   if (attendance) {
 
-    let attendanceList = [null, "出席", "欠席"];
+    let attendanceList = [null, "出席", "欠席", "前半希望"];
 
     // 出欠ステータス更新
     updateAttendanceStatus(getUserEmail(), attendanceList[attendance]);
 
+    let currentStatus = attendanceList[attendance];
     // 前半希望時の処理
     /*
       未実装
     */
 
+    if (currentStatus === "前半希望") {
+      swapFirstHalfApplicants(getUserEmail());
+      sendEmailToAllUsers();
+    }
+
+
     // ステータス更新完了メール送信
     sendStatusUpdateCompleteEmail(getUserEmail(), getUserName(), attendanceList[attendance]);
 
-    return doGet(e, msg = "出欠ステータスを更新しました。");
+    return doGet(e, msg = "申請内容を更新しました");
   }
 
 }
