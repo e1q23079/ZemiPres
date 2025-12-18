@@ -54,32 +54,8 @@
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
         </script>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <strong><a class="navbar-brand" href="<?!= url ?>">ZemiPres</a></strong>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="<?!= url ?>">ホーム</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="<?!= url ?>?page=formAttend">出欠申請</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="<?!= url ?>?page=profile">プロフィール</a>
-                    </li>
-                </ul>
-                <span class="navbar-text user-name">
-                    <?= userName ?>
-                </span>
-            </div>
-        </div>
-    </nav>
+    <!-- ヘッダー部分の読み込み -->
+    <?!= include('header') ?>
 
     <? if(msg!=""){ ?>
     <div class="alert alert-primary" role="alert">
@@ -91,9 +67,10 @@
         <div class="mb-3">
             <strong><label for="exampleInputPassword1" class="form-label">ステータス</label></strong>
             <select class="form-select center" aria-label="Default select example" name="attendance" required>
-                <option selected disabled value="">出欠を選択</option>
+                <option selected disabled value="">申請内容を選択</option>
                 <option value="1">出席</option>
                 <option value="2">欠席</option>
+                <option value="3">前半希望</option>
             </select>
         </div>
 
