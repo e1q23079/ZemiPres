@@ -1,0 +1,34 @@
+<!-- PowerPointのスライドサイズ「OHP」 -->
+<style>
+    .ad {
+        display: block;
+        position: relative;
+        width: 300px;
+        margin: 0 auto;
+    }
+
+    .ad-image {
+        width: 300px;
+        height: auto;
+    }
+
+    .ad-mes {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 2px 5px;
+        font-size: 12px;
+        border-radius: 3px;
+    }
+</style>
+
+<? if(adImgSrc != null && adUrl != null){ ?>
+<div class="ad">
+    <a href="<?= adUrl ?>" target="_blank" aria-label="広告（新しいタブで開きます）">
+        <img src="<?= adImgSrc ?>" alt="広告" class="ad-image" />
+        <div class="ad-mes">広告</div>
+    </a>
+</div>
+<? } ?>

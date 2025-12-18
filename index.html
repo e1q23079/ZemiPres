@@ -97,6 +97,9 @@
         <?= lastUpdatedTime ?>
     </p>
 
+    <!-- 広告の読み込み -->
+    <?!= include('ad') ?>
+
     <!-- <p class="next-user">次の発表者は、「北海道 太郎」さんです。</p> -->
 
     <div class="table-box">
@@ -104,7 +107,7 @@
             <thead>
                 <tr>
                     <th scope="col">名前</th>
-                    <th scope="col">出欠</th>
+                    <th scope="col">申請状況</th>
                     <!-- <th scope="col">発表状況</th>
                     <th scope="col">操作</th> -->
                 </tr>
@@ -137,5 +140,10 @@
             </tbody>
         </table>
     </div>
+
+    <!-- 広告の読み込み -->
+    <?!= include('ad') ?>
+
+    <br>
 
 </html>

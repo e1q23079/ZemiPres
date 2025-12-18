@@ -92,6 +92,21 @@ npm run deploy-product
 | `NOTION_LAST_UPDATED_DATABASE_ID` | 最終更新時刻を記録する Notion データベースの ID。更新履歴管理に使用します。 |
 | `PASSCODE` | Web アプリなどで利用する簡易認証パスコード。ユーザー操作を制限したい場合に使用します。 |
 | `TRIGGER_STATUS` | 定期実行（トリガー）の ON/OFF 状態を管理するフラグ。自動実行処理の制御に使用します。 |
+| `AD` | 広告データのJSONを保持します。 |
+
+#### 広告データ（JSON）
+
+```json
+[
+ {
+  "imgSrc": "GoogleドライブのファイルID",
+  "url": "/",
+  "description": "サンプル広告"
+ }
+]
+```
+
+※`id`はGoogleドライブで画像を新しいタブで開いたときにURLに含まれるファイルIDです
 
 #### 設定方法
 
