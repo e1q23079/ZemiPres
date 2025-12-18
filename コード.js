@@ -9,12 +9,19 @@
 // const sheet = spred.getSheetByName('test'); // 開発環境
 // const sheet = spred.getSheetByName('product'); // 本番環境
 
+// 開発環境フラグ
+const develop = false; // true: 開発環境, false: 本番環境
+
 // DBへの接続設定
 const notionToken = PropertiesService.getScriptProperties().getProperty('NOTION_TOKEN');
-// const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_TEST'); // 開発環境
-const notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_PRODUCT'); // 本番環境
-
-const lastUpdatedDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_LAST_UPDATED_DATABASE_ID'); // 更新時刻管理用DB
+let notionDatabaseId, lastUpdatedDatabaseId;
+if (develop) {
+  notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_TEST'); // 開発環境
+  lastUpdatedDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_LAST_UPDATED_DATABASE_ID_DEV'); // 開発用更新時刻管理用DB
+} else {
+  notionDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_DATABASE_ID_PRODUCT'); // 本番環境
+  lastUpdatedDatabaseId = PropertiesService.getScriptProperties().getProperty('NOTION_LAST_UPDATED_DATABASE_ID'); // 本番用更新時刻管理用DB
+}
 
 const notionApiUrlQuery = `https://api.notion.com/v1/databases/${notionDatabaseId}/query`;
 const notionApiUrlPage = `https://api.notion.com/v1/pages`;
@@ -77,9 +84,9 @@ function getUserPresentationOrder(userEmail) {
   // NotionAPIでuserEmailの発表順を取得して返す
   const users = getAllUsers();
 
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].email === userEmail) {
-      return users[i].number;
+  for (let user of users) {
+    if (user.email === userEmail) {
+      return user.number;
     }
   }
 
@@ -94,9 +101,9 @@ function sendEmailToAllUsers() {
   let users = getAllUsers();
   let subject = "発表順番管理ツール ZemiPress からのお知らせ";
 
-  for (let i = 0; i < users.length; i++) {
-    let body = `発表の順番が更新されました。\n${users[i].name}さんは${getUserPresentationOrder(users[i].email)}番目の発表です。\n詳細は、ZemiPressをご確認ください。\nhttps://script.google.com/a/macros/oit.ac.jp/s/AKfycbwiyeXQoOj--_So-Xsfc8SiRT1P9wpFj7vF2ViHA7tc3gFmyxPPoUGidXxEwkVB35f3/exec\nまた、明日の発表を欠席される方は、欠席申請をお願いいたします。\n最終更新時刻：${getLastUpdatedTime()}\n※これはZemiPressからの一斉メールです。`;
-    sendEmail(users[i].email, subject, body);
+  for (let user of users) {
+    let body = `発表の順番が更新されました。\n${user.name}さんは${getUserPresentationOrder(user.email)}番目の発表です。\n詳細は、ZemiPressをご確認ください。\n${getNowUrl()}\nまた、明日の発表を欠席される方は、欠席申請をお願いいたします。\n最終更新時刻：${getLastUpdatedTime()}\n※これはZemiPressからの一斉メールです。`;
+    sendEmail(user.email, subject, body);
   }
 
 }
@@ -115,6 +122,10 @@ function triggerSendEmailToAllUsers() {
   }
 }
 
+function triggerSetDisplayFalse() {
+  toggleDisplayStatus(false); // 表示切替を「非表示」に設定
+}
+
 // // sheetから全ユーザーのメールアドレスを取得し、sendEmail関数で一括送信する
 // function sendEmailToAllUsers(subject, body) {
 //   const users = getAllUsers();
@@ -125,12 +136,8 @@ function triggerSendEmailToAllUsers() {
 //   });
 // }
 
-// ユーザー登録
-function registerUser(userEmail, userName) {
-  // sheetに[userEmail, userName, null, null, null]を追加
-  // sheet.appendRow([userEmail, userName, null, null, null]);
-
-  // NotionAPIでユーザー登録
+// NotionDBにユーザーを追加
+function addUserToNotion(properties) {
   const notionHeaders = {
     method: 'post',
     headers: {
@@ -141,34 +148,46 @@ function registerUser(userEmail, userName) {
     payload:
       JSON.stringify({
         parent: { database_id: notionDatabaseId },
-        properties: {
-          name: {
-            title: [
-              { text: { content: userName } }
-            ]
-          },
-          email: {
-            email: userEmail
-          },
-          attendance: {
-            select: { name: "出席" }
-          },
-          number: {
-            number: null
-          }
-        }
+        properties: properties
+
       }),
     muteHttpExceptions: true
   };
 
   UrlFetchApp.fetch(notionApiUrlPage, notionHeaders);
+}
+
+// ユーザー登録
+function registerUser(userEmail, userName) {
+  // sheetに[userEmail, userName, null, null, null]を追加
+  // sheet.appendRow([userEmail, userName, null, null, null]);
+
+  // NotionAPIでユーザー登録
+  const properties = {
+    name: {
+      title: [
+        { text: { content: userName } }
+      ]
+    },
+    email: {
+      email: userEmail
+    },
+    attendance: {
+      select: { name: "出席" }
+    },
+    number: {
+      number: null
+    }
+  }
+
+  addUserToNotion(properties);
 
 }
 
 // 登録完了メール
 function sendRegistrationCompleteEmail(userEmail, userName) {
   let subject = "発表順番管理ツール ZemiPress ユーザー登録完了のお知らせ";
-  let body = `${userName}さん\nZemiPressへのユーザー登録が完了しました。\nhttps://script.google.com/a/macros/oit.ac.jp/s/AKfycbwiyeXQoOj--_So-Xsfc8SiRT1P9wpFj7vF2ViHA7tc3gFmyxPPoUGidXxEwkVB35f3/exec\n※これはZemiPressからの自動送信メールです。`;
+  let body = `${userName}さん\nZemiPressへのユーザー登録が完了しました。\n${getNowUrl()}\n※これはZemiPressからの自動送信メールです。`;
   sendEmail(userEmail, subject, body);
 }
 
@@ -184,8 +203,8 @@ function isUserRegistered(userEmail) {
 
   // NotionAPIでユーザー登録確認
   const users = getAllUsers();
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].email === userEmail) {
+  for (let user of users) {
+    if (user.email === userEmail) {
       return true;
     }
   }
@@ -248,23 +267,13 @@ function getUsersByPresentationOrder() {
   return users;
 }
 
-// 発表順を更新する
-function updatePresentationOrder(userEmail, orderNumber) {
-  // // sheetのuserEmailの発表順をorderNumberに更新する
-  // let data = sheet.getDataRange().getValues();
-  // for (let i = 0; i < data.length; i++) {
-  //   if (data[i][0] === userEmail) {
-  //     sheet.getRange(i + 1, 5).setValue(orderNumber);
-  //     break;
-  //   }
-  // }
-
-  // NotionAPIで発表順を更新する
+// NotionDBのデータを編集
+function editNotionData(userEmail, properties) {
   const users = getAllUsers();
   let pageId = null;
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].email === userEmail) {
-      pageId = users[i].pageId;
+  for (let user of users) {
+    if (user.email === userEmail) {
+      pageId = user.pageId;
       break;
     }
   }
@@ -279,17 +288,33 @@ function updatePresentationOrder(userEmail, orderNumber) {
       },
       payload:
         JSON.stringify({
-          properties: {
-            number: {
-
-              number: orderNumber
-            }
-          }
+          properties: properties
         }),
       muteHttpExceptions: true
     };
     UrlFetchApp.fetch(`${notionApiUrlPage}/${pageId}`, notionHeaders);
   }
+}
+
+// 発表順を更新する
+function updatePresentationOrder(userEmail, orderNumber) {
+  // // sheetのuserEmailの発表順をorderNumberに更新する
+  // let data = sheet.getDataRange().getValues();
+  // for (let i = 0; i < data.length; i++) {
+  //   if (data[i][0] === userEmail) {
+  //     sheet.getRange(i + 1, 5).setValue(orderNumber);
+  //     break;
+  //   }
+  // }
+
+  // NotionAPIで発表順を更新する
+  const properties = {
+    number: {
+      number: orderNumber
+    }
+  }
+
+  editNotionData(userEmail, properties);
 
 }
 
@@ -325,24 +350,25 @@ function assignPresentationOrder() {
   }
   // 発表順を更新
   for (let i = 0; i < users.length; i++) {
-    const notionHeaders = {
-      method: 'patch',
-      headers: {
-        'Authorization': `Bearer ${notionToken}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json'
-      },
-      payload:
-        JSON.stringify({
-          properties: {
-            number: {
-              number: numbers[i]
-            }
-          }
-        }),
-      muteHttpExceptions: true
-    };
-    UrlFetchApp.fetch(`${notionApiUrlPage}/${users[i].pageId}`, notionHeaders);
+    // const notionHeaders = {
+    //   method: 'patch',
+    //   headers: {
+    //     'Authorization': `Bearer ${notionToken}`,
+    //     'Notion-Version': '2022-06-28',
+    //     'Content-Type': 'application/json'
+    //   },
+    //   payload:
+    //     JSON.stringify({
+    //       properties: {
+    //         number: {
+    //           number: numbers[i]
+    //         }
+    //       }
+    //     }),
+    //   muteHttpExceptions: true
+    // };
+    // UrlFetchApp.fetch(`${notionApiUrlPage}/${users[i].pageId}`, notionHeaders);
+    updatePresentationOrder(users[i].email, numbers[i]);
   }
 
 }
@@ -359,29 +385,70 @@ function resetStatus() {
 
   // NotionAPIでステータスリセット
   const users = getAllUsers();
-  for (let i = 0; i < users.length; i++) {
-    const notionHeaders = {
-      method: 'patch',
-      headers: {
-        'Authorization': `Bearer ${notionToken}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json'
+  // for (let i = 0; i < users.length; i++) {
+  //   const notionHeaders = {
+  //     method: 'patch',
+  //     headers: {
+  //       'Authorization': `Bearer ${notionToken}`,
+  //       'Notion-Version': '2022-06-28',
+  //       'Content-Type': 'application/json'
+  //     },
+  //     payload:
+  //       JSON.stringify({
+  //         properties: {
+  //           attendance: {
+  //             select: { name: "出席" }
+  //           },
+  //           number: {
+  //             number: null
+  //           }
+  //         }
+  //       }),
+  //     muteHttpExceptions: true
+  //   };
+  //   UrlFetchApp.fetch(`${notionApiUrlPage}/${users[i].pageId}`, notionHeaders);
+  // }
+
+  for (let user of users) {
+    const properties = {
+      attendance: {
+        select: { name: "出席" }
       },
-      payload:
-        JSON.stringify({
-          properties: {
-            attendance: {
-              select: { name: "出席" }
-            },
-            number: {
-              number: null
-            }
-          }
-        }),
-      muteHttpExceptions: true
-    };
-    UrlFetchApp.fetch(`${notionApiUrlPage}/${users[i].pageId}`, notionHeaders);
+      number: {
+        number: null
+      }
+    }
+    editNotionData(user.email, properties);
   }
+
+}
+
+// 前半希望者を入れ替え
+function swapFirstHalfApplicants(userEmail) {
+  const users = getAllUsers();
+  users.sort((a, b) => a.number - b.number);
+
+  const targetUser = users.find(u => u.email === userEmail);
+  const otherUsers = users.filter(u => u.email !== userEmail);
+
+  if (!targetUser) {
+    return;
+  }
+
+  const sotedUsers = [targetUser, ...otherUsers];
+
+  sotedUsers.forEach((user, index) => {
+    const newNumber = index + 1;
+
+    if (user.number !== newNumber) {
+      const properties = {
+        number: {
+          number: newNumber
+        }
+      };
+      editNotionData(user.email, properties);
+    }
+  });
 
 }
 
@@ -397,42 +464,48 @@ function updateAttendanceStatus(userEmail, status) {
   // }
 
   // NotionAPIで出欠ステータスを更新する
-  const users = getAllUsers();
-  let pageId = null;
+  // const users = getAllUsers();
+  // let pageId = null;
 
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].email === userEmail) {
-      pageId = users[i].pageId;
-      break;
+  // for (let i = 0; i < users.length; i++) {
+  //   if (users[i].email === userEmail) {
+  //     pageId = users[i].pageId;
+  //     break;
+  //   }
+  // }
+
+  // if (pageId) {
+  //   const notionHeaders = {
+  //     method: 'patch',
+  //     headers: {
+  //       'Authorization': `Bearer ${notionToken}`,
+  //       'Notion-Version': '2022-06-28',
+  //       'Content-Type': 'application/json'
+  //     },
+  //     payload:
+  //       JSON.stringify({
+  //         properties: {
+  //           attendance: {
+  //             select: { name: status }
+  //           }
+  //         }
+  //       }),
+  //     muteHttpExceptions: true
+  //   };
+  //   UrlFetchApp.fetch(`${notionApiUrlPage}/${pageId}`, notionHeaders);
+  // }
+  const properties = {
+    attendance: {
+      select: { name: status }
     }
   }
-
-  if (pageId) {
-    const notionHeaders = {
-      method: 'patch',
-      headers: {
-        'Authorization': `Bearer ${notionToken}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json'
-      },
-      payload:
-        JSON.stringify({
-          properties: {
-            attendance: {
-              select: { name: status }
-            }
-          }
-        }),
-      muteHttpExceptions: true
-    };
-    UrlFetchApp.fetch(`${notionApiUrlPage}/${pageId}`, notionHeaders);
-  }
+  editNotionData(userEmail, properties);
 }
 
 // ステータス更新完了メール
 function sendStatusUpdateCompleteEmail(userEmail, userName, status) {
   let subject = "発表順番管理ツール ZemiPress ステータス更新完了のお知らせ";
-  let body = `${userName}さん\nZemiPressの出欠状況が「${status}」に更新されました。\nhttps://script.google.com/a/macros/oit.ac.jp/s/AKfycbwiyeXQoOj--_So-Xsfc8SiRT1P9wpFj7vF2ViHA7tc3gFmyxPPoUGidXxEwkVB35f3/exec\n※これはZemiPressからの自動送信メールです。`;
+  let body = `${userName}さん\nZemiPressの出欠状況が「${status}」に更新されました。\n${getNowUrl()}\n※これはZemiPressからの自動送信メールです。`;
   sendEmail(userEmail, subject, body);
 }
 
@@ -506,12 +579,100 @@ function getCurrentTime() {
   // 現在の時刻を返す
   const now = new Date();
   const year = now.getFullYear();
-  const month = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
   const day = String(now.getDate()).padStart(2, '0');
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const seconds = String(now.getSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  // ISO 8601形式で返す
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}+09:00`;
+}
+
+// 表示切替
+function toggleDisplayStatus(status) {
+
+  const properties = {
+    display: {
+      select: { name: status ? "表示" : "非表示" }
+    }
+  }
+
+  const notionHeaders = {
+    method: 'post',
+    headers: {
+      'Authorization': `Bearer ${notionToken}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json'
+    },
+    payload:
+      JSON.stringify({
+        "sorts": [
+          {
+            "property": "updated_time",
+            "direction": "descending"
+          }
+        ],
+        "page_size": 1
+      }),
+    muteHttpExceptions: true
+  };
+
+  const response = UrlFetchApp.fetch(`https://api.notion.com/v1/databases/${lastUpdatedDatabaseId}/query`, notionHeaders);
+  const json = JSON.parse(response.getContentText());
+  let updateId;
+
+  if (json.results.length > 0) {
+    updateId = json.results[0].id;
+    const notionHeaders = {
+      method: 'patch',
+      headers: {
+        'Authorization': `Bearer ${notionToken}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+      },
+      payload:
+        JSON.stringify({
+          properties: properties
+        }),
+      muteHttpExceptions: true
+    };
+    UrlFetchApp.fetch(`${notionApiUrlPage}/${updateId}`, notionHeaders);
+  }
+}
+
+// 表示フラグ取得
+function getDisplayStatus() {
+
+  const notionHeaders = {
+    method: 'post',
+    headers: {
+      'Authorization': `Bearer ${notionToken}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json'
+    },
+    payload:
+      JSON.stringify({
+        "sorts": [
+          {
+            "property": "updated_time",
+            "direction": "descending"
+          }
+        ],
+        "page_size": 1
+      }),
+    muteHttpExceptions: true
+  };
+
+  const response = UrlFetchApp.fetch(`https://api.notion.com/v1/databases/${lastUpdatedDatabaseId}/query`, notionHeaders);
+  const json = JSON.parse(response.getContentText());
+  let status = null;
+
+  if (json.results.length > 0) {
+    status = json.results[0].properties.display.select.name;
+  }
+
+  return status === "表示" ? true : false;
+
 }
 
 // 更新時刻記録
@@ -547,6 +708,8 @@ function recordLastUpdatedTime() {
     muteHttpExceptions: true
   };
   UrlFetchApp.fetch(notionApiUrlPage, notionHeaders);
+
+  toggleDisplayStatus(true); // 表示切替を「表示」に設定
 }
 
 // Webアプリのメイン処理
@@ -566,16 +729,19 @@ function doGet(e, msg = "") {
     file = 'register';
   }
 
-  // HTMLテンプレートの取得
-  const template = HtmlService.createTemplateFromFile(file);
+  // 表示ステータスがfalseならcloseページへ強制遷移
+  /* ただし，プロフィールページは除く */
+  if (file !== 'profile' && !getDisplayStatus()) {
+    file = 'close';
+  }
 
-  /* メッセージをテンプレートにセット */
-  template.url = getNowUrl();
+
+  // HTMLテンプレートの取得
+  let template = HtmlService.createTemplateFromFile(file);
+
+  // テンプレートにデータをセット
   template.msg = msg;
-  template.usersByPresentationOrder = getUsersByPresentationOrder();
-  template.userName = getUserName();
-  template.userEmail = getUserEmail();
-  template.lastUpdatedTime = getLastUpdatedTime();
+  template = getTemplateData(template);
 
   // メッセージをテンプレートに渡す
   const html = template.evaluate();
@@ -586,6 +752,20 @@ function doGet(e, msg = "") {
 
   return html;
 
+}
+
+// HTMLテンプレートにセットし取得
+function getTemplateData(template) {
+  template.url = getNowUrl();
+  template.usersByPresentationOrder = getUsersByPresentationOrder();
+  template.userName = getUserName();
+  template.userEmail = getUserEmail();
+  template.lastUpdatedTime = getLastUpdatedTime();
+  /* 広告 */
+  const ad = getAd();
+  template.adImgSrc = ad.imgSrc;
+  template.adUrl = ad.url;
+  return template;
 }
 
 function doPost(e) {
@@ -620,15 +800,27 @@ function doPost(e) {
   // 出欠ステータス更新
   if (attendance) {
 
-    let attendanceList = [null, "出席", "欠席"];
+    let attendanceList = [null, "出席", "欠席", "前半希望"];
 
     // 出欠ステータス更新
     updateAttendanceStatus(getUserEmail(), attendanceList[attendance]);
 
+    let currentStatus = attendanceList[attendance];
+    // 前半希望時の処理
+    /*
+      未実装
+    */
+
+    if (currentStatus === "前半希望") {
+      swapFirstHalfApplicants(getUserEmail());
+      sendEmailToAllUsers();
+    }
+
+
     // ステータス更新完了メール送信
     sendStatusUpdateCompleteEmail(getUserEmail(), getUserName(), attendanceList[attendance]);
 
-    return doGet(e, msg = "出欠ステータスを更新しました。");
+    return doGet(e, msg = "申請内容を更新しました");
   }
 
 }
@@ -638,6 +830,51 @@ function getConfig() {
   // return spred.getSheetByName('config').getRange('A1').getValue();
   // スクリプトプロパティから取得
   return PropertiesService.getScriptProperties().getProperty('TRIGGER_STATUS');
+}
+
+// include用関数
+function include(filename) {
+  let template = HtmlService.createTemplateFromFile(filename);
+  template = getTemplateData(template);
+  return template.evaluate().getContent();
+}
+
+// Googleドライブから画像のURLを取得
+function getUrlImageFromDrive(fileId) {
+  const url = `https://drive.google.com/thumbnail?id=${fileId}&sz=w500`;
+  return url;
+}
+
+// 広告を取得
+function getAd() {
+  /* adJson 
+    [{ 'imgSrc': '画像ID', 'url': 'URL','description': '説明文' }, ...]
+     サンプル広告
+     [   {     "imgSrc": "id",     "url": "/",      "description": "サンプル広告"   } ]
+  */
+  try {
+    const adJson = JSON.parse(PropertiesService.getScriptProperties().getProperty('AD'));
+    const randomInt = Math.floor(Math.random() * adJson.length);
+    const adData = adJson[randomInt];
+    return { 'imgSrc': adData?.imgSrc, 'url': adData?.url, 'description': adData?.description };
+  } catch (e) {
+    console.log("広告JSONにエラーがあります: " + e);
+    return { 'imgSrc': null, 'url': null, 'description': '広告データがありません' };
+  }
+}
+
+// 広告JSONチェック
+function checkAdJson() {
+  try {
+    const adJson = JSON.parse(PropertiesService.getScriptProperties().getProperty('AD'));
+    console.log("広告JSONは有効です。");
+    adJson.forEach((ad, index) => {
+      console.log(`広告 ${index + 1}: 画像URL=${getUrlImageFromDrive(ad?.imgSrc)}, URL=${ad?.url}, 説明文=${ad?.description}`);
+    });
+  }
+  catch (e) {
+    console.log("広告JSONにエラーがあります: " + e);
+  }
 }
 
 // テスト
