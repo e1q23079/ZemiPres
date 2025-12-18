@@ -10,7 +10,7 @@
 // const sheet = spred.getSheetByName('product'); // 本番環境
 
 // 開発環境フラグ
-const develop = true; // true: 開発環境, false: 本番環境
+const develop = false; // true: 開発環境, false: 本番環境
 
 // DBへの接続設定
 const notionToken = PropertiesService.getScriptProperties().getProperty('NOTION_TOKEN');
