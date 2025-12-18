@@ -102,7 +102,7 @@ function sendEmailToAllUsers() {
   let subject = "発表順番管理ツール ZemiPress からのお知らせ";
 
   for (let user of users) {
-    let body = `発表の順番が更新されました。\n${user.name}さんは${getUserPresentationOrder(user.email)}番目の発表です。\n詳細は、ZemiPressをご確認ください。\nhttps://script.google.com/a/macros/oit.ac.jp/s/AKfycbwiyeXQoOj--_So-Xsfc8SiRT1P9wpFj7vF2ViHA7tc3gFmyxPPoUGidXxEwkVB35f3/exec\nまた、明日の発表を欠席される方は、欠席申請をお願いいたします。\n最終更新時刻：${getLastUpdatedTime()}\n※これはZemiPressからの一斉メールです。`;
+    let body = `発表の順番が更新されました。\n${user.name}さんは${getUserPresentationOrder(user.email)}番目の発表です。\n詳細は、ZemiPressをご確認ください。\n${getNowUrl()}\nまた、明日の発表を欠席される方は、欠席申請をお願いいたします。\n最終更新時刻：${getLastUpdatedTime()}\n※これはZemiPressからの一斉メールです。`;
     sendEmail(user.email, subject, body);
   }
 
@@ -187,7 +187,7 @@ function registerUser(userEmail, userName) {
 // 登録完了メール
 function sendRegistrationCompleteEmail(userEmail, userName) {
   let subject = "発表順番管理ツール ZemiPress ユーザー登録完了のお知らせ";
-  let body = `${userName}さん\nZemiPressへのユーザー登録が完了しました。\nhttps://script.google.com/a/macros/oit.ac.jp/s/AKfycbwiyeXQoOj--_So-Xsfc8SiRT1P9wpFj7vF2ViHA7tc3gFmyxPPoUGidXxEwkVB35f3/exec\n※これはZemiPressからの自動送信メールです。`;
+  let body = `${userName}さん\nZemiPressへのユーザー登録が完了しました。\n${getNowUrl()}\n※これはZemiPressからの自動送信メールです。`;
   sendEmail(userEmail, subject, body);
 }
 
@@ -505,7 +505,7 @@ function updateAttendanceStatus(userEmail, status) {
 // ステータス更新完了メール
 function sendStatusUpdateCompleteEmail(userEmail, userName, status) {
   let subject = "発表順番管理ツール ZemiPress ステータス更新完了のお知らせ";
-  let body = `${userName}さん\nZemiPressの出欠状況が「${status}」に更新されました。\nhttps://script.google.com/a/macros/oit.ac.jp/s/AKfycbwiyeXQoOj--_So-Xsfc8SiRT1P9wpFj7vF2ViHA7tc3gFmyxPPoUGidXxEwkVB35f3/exec\n※これはZemiPressからの自動送信メールです。`;
+  let body = `${userName}さん\nZemiPressの出欠状況が「${status}」に更新されました。\n${getNowUrl()}\n※これはZemiPressからの自動送信メールです。`;
   sendEmail(userEmail, subject, body);
 }
 
@@ -579,12 +579,13 @@ function getCurrentTime() {
   // 現在の時刻を返す
   const now = new Date();
   const year = now.getFullYear();
-  const month = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
   const day = String(now.getDate()).padStart(2, '0');
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const seconds = String(now.getSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  // ISO 8601形式で返す
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}+09:00`;
 }
 
 // 表示切替
@@ -729,9 +730,11 @@ function doGet(e, msg = "") {
   }
 
   // 表示ステータスがfalseならcloseページへ強制遷移
-  /*
-    実装 
-  */
+  /* ただし，プロフィールページは除く */
+  if (file !== 'profile' && !getDisplayStatus()) {
+    file = 'close';
+  }
+
 
   // HTMLテンプレートの取得
   let template = HtmlService.createTemplateFromFile(file);
