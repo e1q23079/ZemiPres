@@ -805,7 +805,7 @@ function doPost(e) {
     */
 
     if (currentStatus === "前半希望") {
-      swapFirstHalfApplicants(getUserEmail);
+      swapFirstHalfApplicants(getUserEmail());
       sendEmailToAllUsers();
     }
 
