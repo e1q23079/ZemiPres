@@ -856,7 +856,7 @@ function getAd() {
     const adJson = JSON.parse(PropertiesService.getScriptProperties().getProperty('AD'));
     const randomInt = Math.floor(Math.random() * adJson.length);
     const adData = adJson[randomInt];
-    return { 'imgSrc': getUrlImageFromDrive(adData?.imgSrc), 'url': adData?.url, 'description': adData?.description };
+    return { 'imgSrc': adData?.imgSrc, 'url': adData?.url, 'description': adData?.description };
   } catch (e) {
     console.log("広告JSONにエラーがあります: " + e);
     return { 'imgSrc': null, 'url': null, 'description': '広告データがありません' };
