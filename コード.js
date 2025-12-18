@@ -761,6 +761,10 @@ function getTemplateData(template) {
   template.userName = getUserName();
   template.userEmail = getUserEmail();
   template.lastUpdatedTime = getLastUpdatedTime();
+  /* 広告 */
+  const ad = getAd();
+  template.adImgSrc = ad.imgSrc;
+  template.adUrl = ad.url;
   return template;
 }
 
@@ -833,6 +837,44 @@ function include(filename) {
   let template = HtmlService.createTemplateFromFile(filename);
   template = getTemplateData(template);
   return template.evaluate().getContent();
+}
+
+// Googleドライブから画像のURLを取得
+function getUrlImageFromDrive(fileId) {
+  const url = `https://drive.google.com/thumbnail?id=${fileId}&sz=w500`;
+  return url;
+}
+
+// 広告を取得
+function getAd() {
+  /* adJson 
+    [{ 'imgSrc': '画像ID', 'url': 'URL','description': '説明文' }, ...]
+     サンプル広告
+     [   {     "imgSrc": "id",     "url": "/",      "description": "サンプル広告"   } ]
+  */
+  try {
+    const adJson = JSON.parse(PropertiesService.getScriptProperties().getProperty('AD'));
+    const randomInt = Math.floor(Math.random() * adJson.length);
+    const adData = adJson[randomInt];
+    return { 'imgSrc': getUrlImageFromDrive(adData?.imgSrc), 'url': adData?.url, 'description': adData?.description };
+  } catch (e) {
+    console.log("広告JSONにエラーがあります: " + e);
+    return { 'imgSrc': null, 'url': null, 'description': '広告データがありません' };
+  }
+}
+
+// 広告JSONチェック
+function checkAdJson() {
+  try {
+    const adJson = JSON.parse(PropertiesService.getScriptProperties().getProperty('AD'));
+    console.log("広告JSONは有効です。");
+    adJson.forEach((ad, index) => {
+      console.log(`広告 ${index + 1}: 画像URL=${getUrlImageFromDrive(ad?.imgSrc)}, URL=${ad?.url}, 説明文=${ad?.description}`);
+    });
+  }
+  catch (e) {
+    console.log("広告JSONにエラーがあります: " + e);
+  }
 }
 
 // テスト
