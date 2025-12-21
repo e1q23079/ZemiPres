@@ -115,7 +115,7 @@
             <tbody>
                 <? for (var i = 0; i < usersByPresentationOrder.length; i++) { ?>
                 <? var user = usersByPresentationOrder[i]; ?>
-                <tr <? if(user.attendance=="欠席" ){ ?>class="table-secondary"
+                <tr <? if(user.attendance=="欠席" || user.attendance=="発表済み" ){ ?>class="table-secondary"
                     <? } ?>>
                     <th scope="row">
                         <?= user.name ?>
